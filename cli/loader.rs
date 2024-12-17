@@ -54,6 +54,7 @@ use standalone::UNSUPPORTED_SCHEME;
 use std::env;
 use std::future::Future;
 use std::io::IsTerminal;
+use std::io::Read as _;
 use std::ops::Deref;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -75,13 +76,37 @@ fn main() {
 
   let future = async move {
     let flags = flags_from_vec(args)?;
-    run(flags.into()).await
+    dbg!(&flags);
+    run_from_stdin(flags.into()).await
   };
 
   create_and_run_current_thread_with_maybe_metrics(future).unwrap();
 }
 
-async fn run(flags: Arc<Flags>) -> Result<i32, AnyError> {
-  dbg!(&flags);
-  tools::run::run_script(WorkerExecutionMode::Run, flags.clone(), None).await
+async fn run_from_stdin(flags: Arc<Flags>) -> Result<i32, AnyError> {
+  // dbg!(&flags);
+  // tools::run::run_script(WorkerExecutionMode::Run, flags.clone(), None).await
+
+  let factory = CliFactory::from_flags(flags);
+  let cli_options = factory.cli_options()?;
+  let main_module = cli_options.resolve_main_module()?;
+  // maybe_npm_install(&factory).await?;
+
+  let file_fetcher = factory.file_fetcher()?;
+  let worker_factory = factory.create_cli_main_worker_factory().await?;
+  let mut source = Vec::new();
+  std::io::stdin().read_to_end(&mut source)?;
+  // Save a fake file into file fetcher cache
+  // to allow module access by TS compiler
+  file_fetcher.insert_memory_files(file_fetcher::File {
+    specifier: main_module.clone(),
+    maybe_headers: None,
+    source: source.into(),
+  });
+
+  let mut worker = worker_factory
+    .create_main_worker(WorkerExecutionMode::Run, main_module.clone())
+    .await?;
+  let exit_code = worker.run().await?;
+  Ok(exit_code)
 }
