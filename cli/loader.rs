@@ -81,13 +81,12 @@ async fn run_from_stdin(flags: Arc<Flags>) -> Result<i32, AnyError> {
   // maybe_npm_install(&factory).await?;
 
   // Save a fake file into file fetcher cache to allow module access by TS compiler
-  cli_factory
-    .file_fetcher()?
-    .insert_memory_files(file_fetcher::File {
-      specifier: main_module.clone(),
-      maybe_headers: None,
-      source: source.into(),
-    });
+  let file_fetcher = cli_factory.file_fetcher()?;
+  file_fetcher.insert_memory_files(file_fetcher::File {
+    specifier: main_module.clone(),
+    maybe_headers: None,
+    source: source.into(),
+  });
 
   let worker_factory = cli_factory.create_cli_main_worker_factory().await?;
 
