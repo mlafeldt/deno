@@ -34,7 +34,6 @@ use crate::factory::CliFactory;
 use crate::util::display;
 
 use deno_core::error::AnyError;
-use deno_runtime::deno_node::NodeExtInitServices;
 use deno_runtime::fmt_errors::format_js_error;
 use deno_runtime::tokio_util::create_and_run_current_thread_with_maybe_metrics;
 use deno_runtime::worker::{MainWorker, WorkerOptions, WorkerServiceOptions};
@@ -44,7 +43,7 @@ use deno_terminal::colors;
 use util::checksum;
 use worker::{
   create_isolate_create_params, create_web_worker_callback,
-  get_cache_storage_dir, CreateModuleLoaderResult, SharedWorkerState,
+  get_cache_storage_dir, CreateModuleLoaderResult,
 };
 
 fn main() {
@@ -61,7 +60,10 @@ fn main() {
     flags.code_cache_enabled = true;
     // dbg!(&flags);
 
-    run_from_stdin(flags.into()).await
+    let mut source = Vec::new();
+    std::io::stdin().read_to_end(&mut source)?;
+
+    run(&source, flags.into()).await
   };
 
   create_and_run_current_thread_with_maybe_metrics(future).unwrap();
@@ -72,11 +74,8 @@ fn main() {
   // rt.block_on(future).unwrap();
 }
 
-async fn run_from_stdin(flags: Arc<Flags>) -> Result<i32, AnyError> {
+async fn run(source: &[u8], flags: Arc<Flags>) -> Result<i32, AnyError> {
   // tools::run::run_script(WorkerExecutionMode::Run, flags.clone(), None).await
-
-  let mut source = Vec::new();
-  std::io::stdin().read_to_end(&mut source)?;
 
   let cli_factory = CliFactory::from_flags(flags);
   // let cli_options = cli_factory.cli_options()?;
