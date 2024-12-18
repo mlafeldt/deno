@@ -134,28 +134,28 @@ pub struct CliMainWorkerOptions {
   pub serve_host: Option<String>,
 }
 
-struct SharedWorkerState {
-  blob_store: Arc<BlobStore>,
-  broadcast_channel: InMemoryBroadcastChannel,
-  code_cache: Option<Arc<dyn CliCodeCache>>,
-  compiled_wasm_module_store: CompiledWasmModuleStore,
-  feature_checker: Arc<FeatureChecker>,
-  fs: Arc<dyn deno_fs::FileSystem>,
-  maybe_file_watcher_communicator: Option<Arc<WatcherCommunicator>>,
-  maybe_inspector_server: Option<Arc<InspectorServer>>,
-  maybe_lockfile: Option<Arc<CliLockfile>>,
-  module_loader_factory: Box<dyn ModuleLoaderFactory>,
-  node_resolver: Arc<NodeResolver>,
-  npm_resolver: Arc<dyn CliNpmResolver>,
-  pkg_json_resolver: Arc<PackageJsonResolver>,
-  root_cert_store_provider: Arc<dyn RootCertStoreProvider>,
-  root_permissions: PermissionsContainer,
-  shared_array_buffer_store: SharedArrayBufferStore,
-  storage_key_resolver: StorageKeyResolver,
-  options: CliMainWorkerOptions,
-  subcommand: DenoSubcommand,
-  otel_config: Option<OtelConfig>, // `None` means OpenTelemetry is disabled.
-  default_npm_caching_strategy: NpmCachingStrategy,
+pub struct SharedWorkerState {
+  pub blob_store: Arc<BlobStore>,
+  pub broadcast_channel: InMemoryBroadcastChannel,
+  pub code_cache: Option<Arc<dyn CliCodeCache>>,
+  pub compiled_wasm_module_store: CompiledWasmModuleStore,
+  pub feature_checker: Arc<FeatureChecker>,
+  pub fs: Arc<dyn deno_fs::FileSystem>,
+  pub maybe_file_watcher_communicator: Option<Arc<WatcherCommunicator>>,
+  pub maybe_inspector_server: Option<Arc<InspectorServer>>,
+  pub maybe_lockfile: Option<Arc<CliLockfile>>,
+  pub module_loader_factory: Box<dyn ModuleLoaderFactory>,
+  pub node_resolver: Arc<NodeResolver>,
+  pub npm_resolver: Arc<dyn CliNpmResolver>,
+  pub pkg_json_resolver: Arc<PackageJsonResolver>,
+  pub root_cert_store_provider: Arc<dyn RootCertStoreProvider>,
+  pub root_permissions: PermissionsContainer,
+  pub shared_array_buffer_store: SharedArrayBufferStore,
+  pub storage_key_resolver: StorageKeyResolver,
+  pub options: CliMainWorkerOptions,
+  pub subcommand: DenoSubcommand,
+  pub otel_config: Option<OtelConfig>, // `None` means OpenTelemetry is disabled.
+  pub default_npm_caching_strategy: NpmCachingStrategy,
 }
 
 impl SharedWorkerState {
@@ -404,7 +404,7 @@ pub fn get_cache_storage_dir() -> PathBuf {
 
 #[derive(Clone)]
 pub struct CliMainWorkerFactory {
-  shared: Arc<SharedWorkerState>,
+  pub shared: Arc<SharedWorkerState>,
 }
 
 impl CliMainWorkerFactory {
@@ -728,7 +728,7 @@ impl CliMainWorkerFactory {
   }
 }
 
-fn create_web_worker_callback(
+pub fn create_web_worker_callback(
   shared: Arc<SharedWorkerState>,
   stdio: deno_runtime::deno_io::Stdio,
 ) -> Arc<CreateWebWorkerCb> {
