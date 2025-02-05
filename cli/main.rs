@@ -12,7 +12,7 @@ pub mod http_util;
 pub mod js;
 pub mod jsr;
 pub mod lsp;
-pub mod pub module_loader;
+pub mod module_loader;
 pub mod node;
 pub mod npm;
 pub mod ops;
