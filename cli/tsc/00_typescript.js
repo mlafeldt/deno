@@ -136063,6 +136063,7 @@ var unprefixedNodeCoreModuleList = [
   "https",
   "http2",
   "inspector",
+  "inspector/promises",
   "module",
   "net",
   "os",
