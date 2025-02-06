@@ -1,28 +1,28 @@
 // Copyright 2018-2025 the Deno authors. MIT license.
 
-pub mod args;
-pub mod cache;
-pub mod cdp;
-pub mod emit;
-pub mod factory;
-pub mod file_fetcher;
-pub mod graph_container;
-pub mod graph_util;
-pub mod http_util;
-pub mod js;
-pub mod jsr;
-pub mod lsp;
-pub mod module_loader;
-pub mod node;
-pub mod npm;
-pub mod ops;
-pub mod resolver;
-pub mod standalone;
-pub mod task_runner;
-pub mod tools;
-pub mod tsc;
-pub mod util;
-pub mod worker;
+pub mod args; // HACK: made public
+mod cache;
+mod cdp;
+mod emit;
+pub mod factory; // HACK: made public
+mod file_fetcher;
+mod graph_container;
+mod graph_util;
+mod http_util;
+mod js;
+mod jsr;
+mod lsp;
+mod module_loader;
+mod node;
+mod npm;
+mod ops;
+mod resolver;
+mod standalone;
+mod task_runner;
+mod tools;
+mod tsc;
+mod util;
+mod worker;
 
 pub mod sys {
   #[allow(clippy::disallowed_types)] // ok, definition
@@ -60,7 +60,7 @@ use self::npm::ResolveSnapshotError;
 use self::util::draw_thread::DrawThread;
 use crate::args::flags_from_vec;
 use crate::args::DenoSubcommand;
-pub use crate::args::Flags;
+use crate::args::Flags;
 use crate::util::display;
 use crate::util::v8::get_v8_flags_from_env;
 use crate::util::v8::init_v8_flags;
